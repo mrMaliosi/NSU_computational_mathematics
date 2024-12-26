@@ -1,0 +1,5 @@
+output_file=plot_data.csv
+test_case=0
+zero_points_value=5
+iteration_number=5
+points_number=10

@@ -1,0 +1,61 @@
+﻿  2.cpp
+c:\users\владимир\desktop\универ\3 курс\вычмат\2\2\2.cpp(121): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\владимир\desktop\универ\3 курс\вычмат\2\2\2.cpp(156): warning C4018: <: несоответствие типов со знаком и без знака
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\type_traits(16707566): warning C4244: аргумент: преобразование "_Ty" в "int", возможна потеря данных
+          with
+          [
+              _Ty=double
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\type_traits(16707566): note: выполняется компиляция ссылки на экземпляр шаблон функции "double std::_Invoker_functor::_Call<double(__cdecl *&)(double,int),_Ty,_Ty>(_Callable,_Ty &&,_Ty &&) noexcept(false)"
+          with
+          [
+              _Ty=double,
+              _Callable=double (__cdecl *&)(double,int)
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\type_traits(15732480): note: выполняется компиляция ссылки на экземпляр шаблон функции "double std::invoke<double(__cdecl *&)(double,int),double,double>(_Callable,double &&,double &&) noexcept(false)"
+          with
+          [
+              _Callable=double (__cdecl *&)(double,int)
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\functional(16707566): note: выполняется компиляция ссылки на экземпляр шаблон функции "_Rx std::_Invoker_ret<_Rx,false>::_Call<double(__cdecl *&)(double,int),_Ty,_Ty>(double (__cdecl *&)(double,int),_Ty &&,_Ty &&)"
+          with
+          [
+              _Rx=double,
+              _Ty=double
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\functional(16707566): note: выполняется компиляция ссылки на экземпляр шаблон функции "_Rx std::_Invoker_ret<_Rx,false>::_Call<double(__cdecl *&)(double,int),_Ty,_Ty>(double (__cdecl *&)(double,int),_Ty &&,_Ty &&)"
+          with
+          [
+              _Rx=double,
+              _Ty=double
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\functional(15732480): note: при компиляции функции-члена "<Нет данных>" класса класс <Нет данных>
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\functional(1061): note: выполняется компиляция ссылки на экземпляр шаблон класс "std::_Func_impl_no_alloc<double (__cdecl *)(double,int),_Ret,double,double>"
+          with
+          [
+              _Ret=double
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\functional(1313): note: выполняется компиляция ссылки на экземпляр шаблон класс "std::_Is_large<_Impl>"
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\functional(1502): note: выполняется компиляция ссылки на экземпляр шаблон функции "void std::_Func_class<_Ret,double,double>::_Reset<double(__cdecl *)(double,int)>(_Fx &&)"
+          with
+          [
+              _Ret=double,
+              _Fx=double (__cdecl *)(double,int)
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\functional(1502): note: выполняется компиляция ссылки на экземпляр шаблон функции "void std::_Func_class<_Ret,double,double>::_Reset<double(__cdecl *)(double,int)>(_Fx &&)"
+          with
+          [
+              _Ret=double,
+              _Fx=double (__cdecl *)(double,int)
+          ]
+  c:\users\владимир\desktop\универ\3 курс\вычмат\2\2\2.cpp(132): note: выполняется компиляция ссылки на экземпляр шаблон функции "std::function<double (double,double)>::function<double(__cdecl *)(double,int),void>(_Fx)"
+          with
+          [
+              _Fx=double (__cdecl *)(double,int)
+          ]
+  c:\users\владимир\desktop\универ\3 курс\вычмат\2\2\2.cpp(132): note: выполняется компиляция ссылки на экземпляр шаблон функции "std::function<double (double,double)>::function<double(__cdecl *)(double,int),void>(_Fx)"
+          with
+          [
+              _Fx=double (__cdecl *)(double,int)
+          ]
+  2.vcxproj -> C:\Users\Владимир\Desktop\Универ\3 курс\Вычмат\2\Debug\2.exe

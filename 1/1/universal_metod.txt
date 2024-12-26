@@ -1,0 +1,7 @@
+int step = DELTA;
+				while ((((f(l) < 0) && (f(r) < 0)) || ((f(l) > 0) && (f(r) > 0)))) {
+					l += step;
+					r += step;
+					step += DELTA;
+					step *= -1;
+				}

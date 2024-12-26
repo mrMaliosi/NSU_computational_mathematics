@@ -1,0 +1,42 @@
+void dihotomia1(double eps) {
+		double l = -10000, r = 10000;
+		dihotomia2(eps, l, r, 0);
+	}
+
+	void dihotomia2(double eps, double l, double r, int flag) {
+		if (flag == 0) {
+			double m;
+			while (r - l > eps) {
+				m = (l + r) / 2;
+				if (((f(l) < 0) && (f(m) > 0)) || ((f(l) > 0) && (f(m) < 0))) {
+					r = m;
+				}
+				else {
+					l = m;
+				}
+			}
+			ans.push_back(m);
+			dihotomia2(eps, -10000, m + EPS * 100, 1);
+			dihotomia2(eps, -10000, m - EPS * 100, 1);
+			dihotomia2(eps, m + EPS * 100, 10000, 1);
+			dihotomia2(eps, m - EPS * 100, 10000, 1);
+		}
+		else {
+			if (((f(l) > 0) && (f(r) > 0)) || ((f(l) < 0) && (f(r) < 0))) {
+
+			}
+			else {
+				double m;
+				while (r - l > eps) {
+					m = (l + r) / 2;
+					if (((f(l) < 0) && (f(m) > 0)) || ((f(l) > 0) && (f(m) < 0))) {
+						r = m;
+					}
+					else {
+						l = m;
+					}
+				}
+				ans.push_back(m);
+			}
+		}
+	}
