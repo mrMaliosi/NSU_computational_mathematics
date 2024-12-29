@@ -1,11 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
+from scipy.linalg import solve
 
 # Параметры
 L = 2.0  # Длина области
 Nx = 201  # Число узлов
-dx = L / Nx  # Шаг по пространству
+dx = L / (Nx - 1)  # Шаг по пространству
 print(dx)
 dt = 0.01  # Шаг по времени
 T = 2.0  # Время моделирования
@@ -19,7 +20,7 @@ def f1(u):
     return c * u
 
 # Сетка по пространству
-x = np.linspace(-1, 1, Nx, startpoint=False, endpoint=False)
+x = np.linspace(-1, 1, Nx, endpoint=True)
 print(x[-1])
 # Начальное условие
 u_initial = np.where(x < 0, a, b)
@@ -30,23 +31,20 @@ def lax_wendroff(u, a, dx, dt, f):
     
     # Внутренние узлы
     for i in range(1, len(u) - 1):
-        u_new[i] = u[i] - a * dt / (2 * dx) * (u[i+1] - u[i-1]) + 0.5 * (a * dt / dx)**2 * (u[i+1] - 2*u[i] + u[i-1]) + dt * f(u[i])
+        u_new[i] = u[i] - a * dt / (2 * dx) * (u[i+1] - u[i-1]) + 0.5 * (a * dt / dx)**2 * (u[i+1] - 2*u[i] + u[i-1])
     
     # Граничные условия: периодические
     #u_new[0] = u_new[-1]
     
     # Граничные условия: фиксируем значения на границах
-    u_new[0] = 0
-    u_new[-1] = 0
+    u_new[0] = a
+    u_new[-1] = b
     
     return u_new
 
 
-
-# Функция для применения неявной схемы с центральной разностью
-def implicit_central_diff(u, v, dx, dt, f):
-    """
-    Неявная схема с центральной разностью для решения уравнения переноса
+"""
+    Неявная схема с центральной разностью для решения уравнения переноса с нелинейностью f(u)
 
     Parameters:
     u : numpy.ndarray
@@ -57,37 +55,78 @@ def implicit_central_diff(u, v, dx, dt, f):
         Шаг по пространству
     dt : float
         Шаг по времени
-    f : callable
-        Функция, добавляющая нелинейность (например, f(u) = u^2)
 
     Returns:
     u_new : numpy.ndarray
         Вектор значений функции на следующем шаге (t_{n+1})
-    """
-    
-    # Размерность вектора
-    n = len(u)
-    
-    # Массив для хранения новых значений
-    u_new = np.zeros_like(u)
-    
-    # Коеффициенты для схемы
-    alpha = v * dt / (2 * dx)
-    
-    # Построение системы линейных уравнений для новых значений
-    A = np.diag((1 + alpha)**2 * np.ones(n-2)) + np.diag(-alpha * np.ones(n-3), k=1) + np.diag(-alpha * np.ones(n-3), k=-1)
-    
-    # Правая часть с учетом нелинейности и границ
-    rhs = u[1:-1] + dt * f(u[1:-1])
-    
-    # Решение линейной системы для новых значений функции u_new
-    u_new[1:-1] = np.linalg.solve(A, rhs)
-    
-    # Граничные условия: фиксируем значения на границах
-    u_new[0] = 0  # или другое условие на границе
-    u_new[-1] = 0  # или другое условие на границе
-    
+"""
+def implicit_central_diff(u, v, dx, dt, t_idx):
+    # Количество точек в пространстве
+    N = len(u)
+
+    # Формируем матрицу системы
+    coef = np.diag(np.ones(N) * (-1 / 2*dx), 0) + np.diag(np.ones(N-1) * ((-v * dt) / (2 * dx)), -1) + np.diag(np.ones(N-1) * ((v * dt) / (2 * dx)), 1)
+
+    u_new = np.copy(u)
+    for t in range(t_idx):
+        u_new[0] -= a
+        u_new[-1] -= b
+        u_new = solve(coef, u_new)
+
     return u_new
+
+    """
+    # Обычные коэффициенты центральной разности
+    alpha = 0
+    beta = 0  # Коэффициент для главной диагонали (в неявной схеме)
+    gamma = -alpha         # Коэффициенты для соседних диагоналей (слева и справа)
+
+    # Формируем матрицу системы
+    A = np.diag(np.ones(N-2) * (1 + alpha**2), 0) + np.diag(np.ones(N-3) * -alpha, -1) + np.diag(np.ones(N-3) * alpha, 1)
+
+    # Функция нелинейности
+    u_new = np.copy(u)  # Начинаем с текущего значения для следующего шага
+    rhs = np.copy(u)    # Правая часть уравнения для шага
+
+    # Решаем систему линейных уравнений
+    u_new[1:-1] = solve(A, rhs[1:-1])  # Решаем для внутренних точек
+
+    # Вставляем граничные условия (например, для простоты, как если бы они были нулевыми)
+    u_new[0] = a  # Левое граничное условие (например, u(0) = u(1))
+    u_new[-1] = b  # Правое граничное условие (например, u(N) = u(N-1))
+    """
+
+"""
+def implicit_central_diff(u, dx, dt):
+    N = len(u)  # Количество точек в сетке
+    v = np.zeros(N)  # Решение на следующем шаге
+
+    alpha = dt / (2 * dx)  # Коэффициент для центральной разности
+
+    # Прогоночные коэффициенты
+    a = -alpha * np.ones(N - 1)  # Коэффициенты для u_{i-1}
+    b = (1 + 2 * alpha) * np.ones(N)  # Коэффициенты для u_i
+    c = -alpha * np.ones(N - 1)  # Коэффициенты для u_{i+1}
+
+    # Вектор правой части (в данном случае f(x) = 0, но может быть изменен)
+    rhs = np.copy(u)
+    
+    # Метод прогонки
+    # Прямой ход
+    for i in range(1, N):
+        m = a[i-1] / b[i-1]
+        b[i] = b[i] - m * c[i-1]
+        rhs[i] = rhs[i] - m * rhs[i-1]
+
+    # Обратный ход
+    v[-1] = rhs[-1] / b[-1]
+    for i in range(N - 2, -1, -1):
+        v[i] = (rhs[i] - c[i] * v[i+1]) / b[i]
+
+    return v
+"""
+
+
 
 # Функция для обновления графиков с ползунком
 def update(val):
@@ -101,8 +140,7 @@ def update(val):
     
     # Через неявную схему с центральной разностью
     u_temp2 = u_initial.copy()
-    for t in range(t_idx):
-        u_temp2 = implicit_central_diff(u_temp2, a, dx, dt, f1)
+    u_temp2 = implicit_central_diff(u_temp2, a, dx, dt, t_idx)
     
     # Обновляем графики
     line1.set_ydata(u_temp1)

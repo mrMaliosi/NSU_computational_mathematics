@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 # Определим исходную функцию
 def f(x):
-    return (np.exp(x) * (np.sin(x) - np.cos(x))) / 2 + 3 / 2;
+    return (np.exp(x) * (np.sin(x) - np.cos(x))) / 2 + 3 / 2
 
 # Определим производную исходной функции
 def g(x):
@@ -15,15 +15,30 @@ def second_order_difference(f, x, h):
     return (-f(x) + f(x + h)) / h - ((1/2) * g(x) + (1/2) * g(x + h))
 
 def second_order_difference_operator_form(x, start_val, h):
-    """Вычисление точек по операторной норме с использованием конечных разностей первого порядка"""
     y = []
     y.append(start_val)
+    y.append(start_val * (1 + h))
+    y.append(2 * h * y[1] + y[0])
+    y.append(2 * h * y[2] + y[1])
 
-    # Поскольку индекс в Python начинается с 0, начнем с 1, так как y[0] уже задано.
-    for i in range(len(x) - 1):  # Пробегаем по всем индексам, кроме последнего
-        y.append(y[i] * h * (4/(h*(h + 4)) - 1))  # Формула для разности первого порядка
+    for i in range(4, len(x)):
+        y.append(y[i - 2] + (h / 3) * (g(x[i] + h) + g(x[i] - h)) + ((4 * h) / 3) * g(x[i]))
 
     return y
+
+def forth_order_difference_operator_form(x, start_val, h):
+    y = []
+    y.append(start_val)
+    y.append(start_val*(1 + h))
+    y.append(2 * h * y[1] + y[0])
+    y.append(4.5 * y[2] - 9 * y[1] + (11 / 2) * y[0])
+    y.append((39/4)* y[3] - 14 * y[2] + 21/4 * y[1])
+
+    for i in range(5, len(x)):
+        y.append(y[i - 2] + (h / 3) * (g(x[i] + h) + g(x[i] - h)) + ((4 * h) / 3) * g(x[i]))
+
+    return y
+
 
 def forth_order_difference(f, x, h):
     """ Разностный оператор четвёртого порядка """
@@ -31,31 +46,32 @@ def forth_order_difference(f, x, h):
 
 
 # Параметры
-h = 0.01  # шаг сетки
-x_min = -5  # минимальное значение x
+x_min = 0  # минимальное значение x
 x_max = 5  # максимальное значение x
-num_points = 1000  # количество точек сетки
+num_points = 1001  # количество точек сетки
+h = (x_max - x_min) / (num_points - 1) # шаг сетки
 
 # Создаем массив точек сетки
 x = np.linspace(x_min, x_max, num_points)
-y_exact = g(x)  # Значения производной функции
+print(x[0])
+print(x[-1])
+print(h)
+print(x[1] - x[0])
+y_exact = f(x)  # Значения производной функции
 
 # Создаем фигуру для графиков
 plt.figure(figsize=(12, 10))
 
 # Для каждого оператора
-operators = [second_order_difference_operator_form, forth_order_difference]
+operators = [second_order_difference_operator_form, forth_order_difference_operator_form]
 operator_names = ['2nd Order Difference', '4th Order Difference']
 
 for i, operator in enumerate(operators):
     y_approx = []
-    if (i == 0):
-        y_approx = operator(x, -1, h)  # Приближение для каждой точки
-    else:
-        y_approx = np.array([operator(f, xi, h) for xi in x])
+    y_approx = operator(x, 1, h)  # Приближение для каждой точки
     
     plt.subplot(2, 1, i+1)  # 3 строки, 1 колонка, график i+1
-    plt.plot(x, y_exact, label="Производная функции", color='blue')
+    plt.plot(x, y_exact, label="Решение", color='blue')
     plt.plot(x, y_approx, label=f"Приближение по {operator_names[i]}", color='red')
     plt.title(f"График {operator_names[i]}")
     plt.legend()

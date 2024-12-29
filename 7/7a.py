@@ -4,10 +4,10 @@ from matplotlib.widgets import Slider
 
 # Параметры
 L = 5.0  # Длина области
-Nx = 500  # Число узлов
-dx = L / Nx  # Шаг по пространству
+Nx = 101  # Число узлов
+dx = L / (Nx - 1)  # Шаг по пространству
 dt = 0.01  # Шаг по времени
-T = 1.0  # Время моделирования
+T = 20.0  # Время моделирования
 a = 1.0  # Скорость переноса
 b = 0.5  # Скорость для второй части области
 
@@ -86,9 +86,9 @@ def implicit_central_diff(u, v, dx, dt, f):
     alpha = v * dt / (2 * dx)
     
     # Построение системы линейных уравнений для новых значений
-    A = np.diag((1 + alpha)**2 * np.ones(n-2)) + np.diag(-alpha * np.ones(n-3), k=1) + np.diag(-alpha * np.ones(n-3), k=-1)
+    A = np.diag((1 + alpha) * np.ones(n-2)) + np.diag(-alpha * np.ones(n-3), k=1) + np.diag(-alpha * np.ones(n-3), k=-1)
     
-    # Правая часть с учетом нелинейности и границ
+    # Правая часть с учетом нелинейности и текущих значений
     rhs = u[1:-1] + dt * f(u[1:-1])
     
     # Решение линейной системы для новых значений функции u_new
@@ -109,11 +109,18 @@ def update(val):
     for t in range(t_idx):
         u_temp1 = lax_wendroff(u_temp1, a, dx, dt, f1)
     
+    print("--------------")
+    print(x)
+    print(u_temp1)
+
     # Решение для f(u) = u^2 / 2
     u_temp2 = u_initial.copy()
     for t in range(t_idx):
         u_temp2 = lax_wendroff(u_temp2, a, dx, dt, f1)
     
+    print(x)
+    print(u_temp2)
+
     # Обновляем графики
     line1.set_ydata(u_temp1)
     line2.set_ydata(u_temp2)
@@ -126,6 +133,8 @@ def update(val):
     #time_text.set_text(f"t = {val:.2f}")
     fig.canvas.draw_idle()
 
+
+
 # Создание фигуры и осей
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
 plt.subplots_adjust(hspace=0.4, bottom=0.25)  # hspace для отступа между графиками
@@ -133,6 +142,10 @@ plt.subplots_adjust(hspace=0.4, bottom=0.25)  # hspace для отступа м�
 # Графики для обоих решений
 line1, = ax1.plot(x, u_initial, label='Решение для f(u) = cu', color='blue')
 line2, = ax2.plot(x, u_initial, label='Решение для f(u) = cu цр', color='red')
+
+print("--------------")
+print(x)
+print(u_initial)
 
 # Настройки для графиков
 ax1.set_xlabel('x')
