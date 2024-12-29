@@ -20,7 +20,7 @@ def f1(u):
     return c * u
 
 # Сетка по пространству
-x = np.linspace(-1, 1, Nx, endpoint=True)
+x = np.linspace(-1, 1, Nx)
 print(x[-1])
 # Начальное условие
 u_initial = np.where(x < 0, a, b)
@@ -44,7 +44,7 @@ def lax_wendroff(u, a, dx, dt, f):
 
 
 """
-    Неявная схема с центральной разностью для решения уравнения переноса с нелинейностью f(u)
+    Неявная схема с центральной разностью для решения уравнения переноса u + f(u) = 0
 
     Parameters:
     u : numpy.ndarray
@@ -55,6 +55,8 @@ def lax_wendroff(u, a, dx, dt, f):
         Шаг по пространству
     dt : float
         Шаг по времени
+    t_idx : int
+        Число шагов по времени
 
     Returns:
     u_new : numpy.ndarray
@@ -65,13 +67,15 @@ def implicit_central_diff(u, v, dx, dt, t_idx):
     N = len(u)
 
     # Формируем матрицу системы
-    coef = np.diag(np.ones(N) * (-1 / 2*dx), 0) + np.diag(np.ones(N-1) * ((-v * dt) / (2 * dx)), -1) + np.diag(np.ones(N-1) * ((v * dt) / (2 * dx)), 1)
+    coef = np.diag(np.ones(N), 0) + np.diag(np.ones(N-1) * ((-v * dt) / (2 * dx)), -1) + np.diag(np.ones(N-1) * ((v * dt) / (2 * dx)), 1)
 
     u_new = np.copy(u)
+    
     for t in range(t_idx):
         u_new[0] -= a
         u_new[-1] -= b
         u_new = solve(coef, u_new)
+        
 
     return u_new
 
