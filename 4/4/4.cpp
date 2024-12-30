@@ -56,12 +56,13 @@ public:
 			{{4, 1, 0, 0}, {1, 4, 1, 0}, {0, 1, 4, 1}, {0, 0, 1, 4}}, {5, 5, 5, 5}
 		};
 		ExampleInfo example3 = {
-			{{4, 1, 0, 0}, {1, 4, 1, 0}, {0, 1, 4, 1}, {0, 0, 1, 4}}, {5, 5, 5, 5}
+			{{0, 1, 2}, {1, 0, 1}, {2, 1, 0}}, {2, 2, 2} 
 		};
 
 		examples.push_back(example0);
 		examples.push_back(example1);
-		examples.push_back(example2);
+		examples.push_back(example2); 
+		examples.push_back(example3);
 	}
 
 	// Функция для вывода информации о примерах
@@ -70,6 +71,7 @@ public:
 		std::cout << "0. Матрица Гильберта." << std::endl;
 		std::cout << "1. Матрица с контрольной." << std::endl;
 		std::cout << "2. Трёхдиагональная матрица." << std::endl;
+		std::cout << "3. Особая матрица." << std::endl;
 	}
 
 	// Получить matrix i-ого example
@@ -150,7 +152,27 @@ void Ux(vector <vector <double>> &U, vector <double> &x, vector <double> &y, int
 }
 
 ////////////////////////////////////Jacoby////////////////////////////////////
-//TO DO добавить перестановку строк для недопущения нулевых элементов на диагонали
+//Чтобы метод сходился необходимо чтобы матрица A была матрица диагонально преобладающей
+bool Jacob_convergence(vector <vector <double>> &A, int n) {
+	for (int i = 0; i < n; ++i) {
+		double check_sum = 0;
+		for (int j = 0; j < n; ++j) {
+			if (j == i) {
+				//Ничего не делаем
+			}
+			else {
+				check_sum += A[i][j];
+			}
+		}
+
+		if (A[i][i] <= check_sum) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 void Jacob(vector <vector <double>> &A, vector <double> &x, vector <double> &b, int n) {
 	int k = 0;
 	set <double> s;
@@ -171,7 +193,7 @@ void Jacob(vector <vector <double>> &A, vector <double> &x, vector <double> &b, 
 				}
 			}
 
-			x1[i] = (double)1 / A[i][i] * (b[i] - x1[i]);
+			x1[i] = (1.0 / A[i][i]) * (b[i] - x1[i]);
 		}
 
 		//Копируем
@@ -196,7 +218,7 @@ void Jacob(vector <vector <double>> &A, vector <double> &x, vector <double> &b, 
 		eps = sqrt(eps);
 	} while (eps > EPS);
 }
-						//vector <vector <double>> &A, vector <double> &x, vector <double> &b, int n
+
 void thomas_algorithm(vector<vector <double>>& A, vector<double>& b, vector<double>& x, int n) {
 	// Прямой ход
 	vector<double> csi(n + 1), teta(n + 1);
@@ -227,7 +249,23 @@ void vector_print(const vector<T>& q) {
 	cout << endl;
 }
 
-void A_normalize()
+
+void A_normalize(std::vector<std::vector<double>>& A) {
+	int n = A.size();
+
+	for (int i = 0; i < n; ++i) {
+		if (A[i][i] == 0) {
+			bool found = false;
+			for (int j = i + 1; j < n; ++j) {
+				if (A[j][j] != 0) {
+					std::swap(A[i], A[j]);
+					found = true;
+					break;
+				}
+			}
+		}
+	}
+}
 
 typedef struct Answer {
 	double ans;
@@ -279,6 +317,7 @@ int main(int argc, char * argv[]) {
 		}
 	}
 
+	A_normalize(A);
 	//////////////////LU//////////////////
 	n = A.size();
 	L.resize(n, vector <double>(n));
@@ -295,11 +334,18 @@ int main(int argc, char * argv[]) {
 
 
 	//////////////////Jacob//////////////////
-	Jacob(A, x, b, n);
-	cout << ORANGE + "[Jacob]" + RESET << endl;
-	cout << "Vector x is: ";
-	vector_print(x);
-	cout << endl;
+	if (Jacob_convergence(A, n)) {
+		Jacob(A, x, b, n);
+		cout << ORANGE + "[Jacob]" + RESET << endl;
+		cout << "Vector x is: " << endl;
+		vector_print(x);
+		cout << endl;
+	}
+	else {
+		cout << ORANGE + "[Jacob]" + RESET << endl;
+		cout << "ALARM! Метод малость не сходится(";
+	}
+	
 
 
 	//////////////////Progonka//////////////////

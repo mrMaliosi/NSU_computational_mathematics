@@ -12,6 +12,7 @@ dt = 0.01  # Шаг по времени
 T = 2.0  # Время моделирования
 a = 1.0  # Скорость переноса
 b = 0.5  # Скорость для второй части области
+print(a*dt/dx)
 
 # Параметры для функции f(u)
 c = 1.0  # Константа для f(u) = cu
@@ -71,15 +72,22 @@ def implicit_central_diff(u, v, dx, dt, t_idx):
 
     u_new = np.copy(u)
     
+    edges = 5
+    
     for t in range(t_idx):
-        u_new[0] -= a
-        u_new[-1] -= b
+        u_new[0] -= a * (-v * dt) / (2 * dx)
+        u_new[-1] -= b * (v * dt) / (2 * dx)
         u_new = solve(coef, u_new)
         
-
+            
     return u_new
 
     """
+    for i in range(edges):
+            if (u_new[-i - 1] < b):
+                u_new[-i - 1] = b
+            if (u_new[i] < 0.0):
+                u_new[i] = 0
     # Обычные коэффициенты центральной разности
     alpha = 0
     beta = 0  # Коэффициент для главной диагонали (в неявной схеме)

@@ -31,6 +31,7 @@ const std::string NEWTON = LIGHT_YELLOW + "<Ньютон>: " + RESET;
 const std::string SECANT = ORANGE + "<Секущая>: " + RESET;
 
 #define SCALE 0.01
+#define ZERO_CHECK 1e18
 
 //////////////////File names manipulation//////////////////
 std::string add_string_base_to_file(std::string file_name, std::string number = "") {
